@@ -13,7 +13,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 function BarChart({ labels, data, title }) {
     return (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mx-auto">
             <Bar
                 data={{
                     labels,
@@ -25,7 +25,8 @@ function BarChart({ labels, data, title }) {
                         },
                     ],
                 }}
-                options={{ responsive: true }}
+                options={{ responsive: true, maintainAspectRatio: false }}
+                height={300}
             />
         </div>
     );

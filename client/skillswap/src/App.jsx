@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'
+import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -18,63 +17,28 @@ import NotificationPreferences from './pages/NotificationPreferences';
 import Navbar from './components/Navbar';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-
-        <Route path="/signup" element={<Signup />} />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/freelancers" element={<FreelancerSearch />} />
-        <Route path="/projects/new" element={
-          <ProtectedRoute role="client">
-            <ProjectForm />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-
-        <Route path="/projects/:id" element={<ProtectedRoute role="client"><ProjectDetail /></ProtectedRoute>} />
-
-        <Route path="/freelancer/projects/:id" element={
-          <ProtectedRoute role="freelancer">
-            <FreelancerProjectDetail />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/reviews/submit/:projectId" element={
-          <ProtectedRoute role="client">
-            <SubmitReview />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/freelancers/profile/:id" element={<FreelancerProfile />} />
-
-        <Route path="/admin/verification" element={
-          <ProtectedRoute role="admin">
-            <AdminVerification />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/notifications/preferences" element={
-          <ProtectedRoute>
-            <NotificationPreferences />
-          </ProtectedRoute>
-        } />
-      </Routes>
+      <div className="p-4 max-w-7xl mx-auto">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/freelancers" element={<ProtectedRoute><FreelancerSearch /></ProtectedRoute>} />
+          <Route path="/post-project" element={<ProtectedRoute><ProjectForm /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+          <Route path="/freelancer-project/:id" element={<ProtectedRoute><FreelancerProjectDetail /></ProtectedRoute>} />
+          <Route path="/submit-review/:freelancerId" element={<ProtectedRoute><SubmitReview /></ProtectedRoute>} />
+          <Route path="/freelancer-profile/:freelancerId" element={<ProtectedRoute><FreelancerProfile /></ProtectedRoute>} />
+          <Route path="/admin/verify-freelancers" element={<ProtectedRoute><AdminVerification /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
+        </Routes>
+      </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
