@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom';
 
 function FreelancerCard({ freelancer }) {
     return (
-        <div className="border p-4 rounded shadow-sm bg-white space-y-1">
-            <h3 className="text-lg font-bold">{freelancer.name}</h3>
-            <p>🎓 Skills: {freelancer.skills?.join(', ') || 'N/A'}</p>
-            <p>✅ Level: {freelancer.verification?.level || 'Basic'}</p>
-            <p>⭐ Rating: {freelancer.avgRating?.toFixed(1) || 'N/A'} / 5</p>
-            <Link to={`/freelancers/profile/${freelancer._id}`} className="text-blue-600 underline text-sm">
-                View Profile
+        <div className="border rounded-xl p-5 bg-white shadow-md hover:shadow-lg transition space-y-2">
+            <h3 className="text-xl font-semibold text-gray-800">{freelancer.name}</h3>
+            <p className="text-gray-600">🎓 <span className="font-medium">Skills:</span> {freelancer.skills?.join(', ') || 'N/A'}</p>
+            <p className="text-gray-600">✅ <span className="font-medium">Level:</span> {freelancer.verification?.level || 'Basic'}</p>
+            <p className="text-gray-600">⭐ <span className="font-medium">Rating:</span> {freelancer.avgRating?.toFixed(1) || 'N/A'} / 5</p>
+            <Link
+                to={`/freelancers/profile/${freelancer._id}`}
+                className="inline-block mt-2 text-blue-600 hover:underline"
+            >
+                View Profile →
             </Link>
-
         </div>
     );
 }
