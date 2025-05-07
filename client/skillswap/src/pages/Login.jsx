@@ -1,52 +1,76 @@
-import { useState } from 'react';
-import API from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // To redirect after login
+import { useAuth } from '../context/AuthContext'; // Import AuthContext for managing user state
 
 function Login() {
-    const [form, setForm] = useState({ email: '', password: '' });
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const { login } = useAuth(); // Get the login function from AuthContext
+    const navigate = useNavigate(); // For redirecting the user after login
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const [email, setEmail] = useState(''); // For storing email input
+    const [password, setPassword] = useState(''); // For storing password input
+    const [error, setError] = useState(''); // For handling error messages
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Handle login
+    const handleLogin = async (e) => {
+        e.preventDefault(); // Prevent the form from submitting
+
+        if (!email || !password) {
+            setError('Please fill in both fields');
+            return;
+        }
+
         try {
-            const res = await API.post('/auth/login', form);
-            localStorage.setItem('token', res.data.token);
-            navigate('/dashboard');
+            // API call to login the user
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }), // Send email and password to the backend
+            });
+
+            const data = await response.json(); // Parse the response from the backend
+
+            if (response.ok) {
+                // If login is successful, store the user data and token
+                login(data.user, data.token);
+                navigate('/dashboard'); // Redirect to dashboard based on the role
+            } else {
+                setError(data.error || 'Login failed, please try again');
+            }
         } catch (err) {
-            setError('Invalid credentials');
+            setError('Something went wrong');
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
-                <h2 className="text-2xl font-bold text-center text-blue-600">Login</h2>
-                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        <div className="max-w-md mx-auto p-6 bg-white rounded shadow-md">
+            <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+
+            {error && <p className="text-red-600 mb-2">{error}</p>} {/* Display error messages */}
+
+            <form onSubmit={handleLogin}>
                 <input
                     type="email"
-                    name="email"
                     placeholder="Email"
-                    className="w-full border p-2 rounded"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
+                    className="input w-full mb-4"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)} // Update email state
                 />
                 <input
                     type="password"
-                    name="password"
                     placeholder="Password"
-                    className="w-full border p-2 rounded"
-                    value={form.password}
-                    onChange={handleChange}
-                    required
+                    className="input w-full mb-4"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)} // Update password state
                 />
-                <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                    Sign In
-                </button>
+                <button type="submit" className="btn w-full mb-4">Login</button>
             </form>
+
+            <div className="text-center mt-4">
+                <p>Don't have an account? <a href="/signup" className="text-blue-600">Sign Up</a></p>
+                <p><a href="/forgot-password" className="text-blue-600">Forgot Password?</a></p>
+            </div>
         </div>
     );
 }

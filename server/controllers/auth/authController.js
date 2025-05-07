@@ -3,16 +3,25 @@ const { hashPassword, comparePassword } = require('../../utils/hash');
 const { generateToken } = require('../../utils/jwt');
 
 exports.signup = async (req, res) => {
+    const { name, email, password } = req.body;
+
     try {
-        const { name, email, password, role } = req.body;
-        const hashed = await hashPassword(password);
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
 
-        const user = new User({ name, email, password: hashed, role });
-        await user.save();
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        res.status(201).json({ message: "User registered successfully" });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+        // Create new user
+        const newUser = new User({ name, email, password: hashedPassword });
+        await newUser.save();
+
+        res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
     }
 };
 
@@ -34,30 +43,30 @@ exports.login = async (req, res) => {
 
 exports.verifyUser = async (req, res) => {
     const { code, userId } = req.body;
-  
+
     // mock verification: any code works, or just check === "123456"
     if (code !== "123456") {
-      return res.status(400).json({ error: "Invalid code" });
+        return res.status(400).json({ error: "Invalid code" });
     }
-  
+
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
-  
+
     user.verified = true;
     await user.save();
-  
+
     res.json({ message: "User successfully verified" });
 };
-  
+
 exports.resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+    const { email, newPassword } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ error: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-  const hashed = await bcrypt.hash(newPassword, 10);
-  user.password = hashed;
-  await user.save();
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
 
-  res.json({ message: "Password reset successful" });
+    res.json({ message: "Password reset successful" });
 };
