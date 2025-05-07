@@ -14,6 +14,7 @@ const notifyRoutes = require('./routes/notifications/notifyRoutes');
 const analyticsRoutes = require('./routes/analytics/analyticsRoutes');
 const freelancerSearchRoutes = require('./routes/freelancers/searchRoutes');
 const reviewRoutes = require('./routes/freelancers/reviewRoutes');
+const seedRoutes = require('./routes/seedRoutes');
 
 dotenv.config();
 const app = express();
@@ -59,6 +60,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/freelancers/search', freelancerSearchRoutes);
 
 app.use('/api/reviews', reviewRoutes);
+
+app.use('/api/admin', seedRoutes);
 
 // MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, {
